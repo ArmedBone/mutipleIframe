@@ -1,11 +1,4 @@
-import Vue from 'vue'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
 import App from './app.vue'
+import render from  "../../plugins/vue.public.config"
 
-Vue.use(ElementUI)
-
-new Vue({
-  el: '#app',
-  render: h => h(App)
-})
+render(App);

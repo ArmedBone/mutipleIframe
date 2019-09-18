@@ -1,0 +1,34 @@
+/*
+ 主色:
+iView 使用较为安全的蓝色作为主色调，
+其中 Light Primary
+常用于 hover，Dark Primary 常用于 active。
+ */
+$primary:#1890ff;
+$lightPrimary:#5cadff;
+$darkPrimary:#2b85e4;
+
+/*
+辅助色:
+辅助色是具有代表性的颜色，
+常用于信息提示，比如成功、警告和失败。
+*/
+$info:#2db7f5;
+$danger:#ed4014;
+$warning:#ff9900;
+$success:#19be6b;
+
+/*
+ 中性色 #
+	中性色常用于文本、背景、边框、阴影等，
+	可以体现出页面的层次结构。
+ */
+$title:rgba(0,0,0,0.85);
+$content:#515a6e;
+$icon:#808695;
+$desabled:#c5c8ce;
+$border:#dcdee2;
+$divider:#e8eaec;
+$background:#f0f2f5;
+$deepBackground:lighten(#0c142d,5);
+
