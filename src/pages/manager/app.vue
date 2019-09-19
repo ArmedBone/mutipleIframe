@@ -3,7 +3,8 @@
         <div :class="collapse?'side-menu active':'side-menu'"
              :style="{'background-color':theme?'#0c142d':'white'}">
             <div :class="theme?'sitename dark':'sitename light'">
-                运营管理平台
+                <img src="../../assets/img/logo.png">
+                <div>运营管理平台</div>
             </div>
             <a-menu
                     mode="inline"
@@ -15,6 +16,7 @@
                         v-if="!level_01.children"
                         :target="level_01.resourceValue"
                         :title="level_01.resourceName"
+                        data-id="level_01.id"
                         :key="level_01.id">
                     <a-icon type="pie-chart"/>
                     <span>{{level_01.resourceName}}</span>
@@ -22,6 +24,7 @@
                 <a-sub-menu
                         v-for="level_01 in sourceMenu"
                         v-if="level_01.children && level_01.children.length!=0"
+                        data-id="level_01.id"
                         :key="level_01.id">
                     <span slot="title"><a-icon type="mail"/><span>{{level_01.resourceName}}</span></span>
                     <a-menu-item
@@ -29,12 +32,14 @@
                             v-if="!level_02.children "
                             :target="level_02.resourceValue"
                             :title="level_02.resourceName"
+                            data-id="level_02.id"
                             :key="level_02.id">
                         <span>{{level_02.resourceName}}</span>
                     </a-menu-item>
                     <a-sub-menu
                             v-for="level_02 in level_01.children"
                             v-if="level_02.children && level_02.children.length!=0"
+                            data-id="level_02.id"
                             :key="level_02.id">
                         <span slot="title">{{level_02.resourceName}}</span>
                         <a-menu-item
@@ -42,6 +47,7 @@
                                 v-if="!level_03.children "
                                 :target="level_03.resourceValue"
                                 :title="level_03.resourceName"
+                                data-id="level_03.id"
                                 :key="level_03.id">
                             <span>{{level_03.resourceName}}</span>
                         </a-menu-item>
@@ -51,11 +57,7 @@
         </div>
         <div :class="collapse?'manager-content active':'manager-content'">
             <manager-head @userSet="userSet" @menu-fold="menuFold" :collapse="collapse"></manager-head>
-            <manager-tabs
-                    :activeIndex="activeIndex"
-                    :iframeList="iframeList"
-                    @tabItemClick="tabItemClick"
-                    @removeTabItem="removeTabItem"></manager-tabs>
+            <manager-tabs @backCurrent="backCurrent" @removeSiblings="removeSiblings" @removeAllTags="removeAllTags" ref="managerTabs"></manager-tabs>
         </div>
 
     </section>
@@ -63,7 +65,7 @@
 <script type="es6">
   import ManagerHead from './managerHead'
   import ManagerTabs from './managerTabs'
-
+    import TabsMinxin from './tabsMinxin'
   export default {
     data() {
       return {
@@ -72,9 +74,11 @@
         sourceMenu: [],
         iframeList: [],
         activeIndex: -1,
-        theme: true
+        theme: true,
+        currentSelecte:[]
       }
     },
+    mixins:[TabsMinxin],
     components: {
       'managerHead': ManagerHead,
       'managerTabs': ManagerTabs
@@ -152,45 +156,7 @@
         })
         return resourceTree
       },
-      //捕获菜单点击并添加iframe和tabs
-      handleMenuClick(item) {
-        console.log(item)
-        let dom = item.item.$el,
-          target = dom.getAttribute('target'),
-          title = dom.getAttribute('title')? dom.getAttribute('title'):dom.innerText,
-          ele;
-        if (!target) return
-        ele = this.iframeList.find(it => it.target == target)
-        if (ele == null) {
-          this.iframeList.push({
-            title: title,
-            target: target
-          })
-          this.activeIndex = this.iframeList.length - 1
-        } else {
-          this.activeIndex = this.iframeList.indexOf(ele)
-        }
 
-      }
-      ,
-      //删除tabsItem
-      removeTabItem(target, index) {
-        this.iframeList.splice(index, 1)
-        if (this.activeIndex == index && this.activeIndex >= this.iframeList.length - 1) {
-          this.$nextTick(function() {
-            this.activeIndex = this.iframeList.length - 1
-          }.bind(this))
-        } else if (this.activeIndex >= index) {
-          this.$nextTick(function() {
-            this.activeIndex--
-          }.bind(this))
-        }
-      }
-      ,
-      //点击单个item效果
-      tabItemClick(it, index) {
-        this.activeIndex = index
-      }
     }
   }
 </script>
@@ -206,16 +172,26 @@
         width: 220px;
         height: 50px;
         font-size: 18px;
-        text-align: center;
         line-height: 50px;
-
+        & img{
+            width:30px;
+            height: 30px;
+            margin: 10px 4px;
+            float: left;
+            border-radius: 4px;
+            background-color: $primary;
+        }
+        & div{
+            float: left;
+            width:220px - 38px ;
+            text-indent: 4px;
+        }
         &.dark {
             color: white;
         }
 
         &.light {
             color: black;
-            border-bottom: 1px solid #e5e5e5;
         }
     }
 
@@ -226,6 +202,12 @@
         top: 0;
         left: 0;
         overflow: hidden;
+        border-right: 1px solid #e5e5e5;
+        z-index: 200;
+        box-shadow: 0 0 4px rgba(0,0,0,0.1);
+        & .ant-menu.ant-menu-inline{
+            border-right: none;
+        }
     }
 
     .side-menu.active, .ant-menu-inline-collapsed {

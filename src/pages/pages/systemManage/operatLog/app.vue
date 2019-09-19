@@ -13,7 +13,6 @@
   export default {
     name: 'app',
     mounted() {
-      console.log(echarts)
       // 基于准备好的dom，初始化echarts实例
       var myChart = echarts.init(document.getElementById('main'));
       // 绘制图表

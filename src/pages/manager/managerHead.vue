@@ -19,7 +19,7 @@
                        </a-menu-item>
                        <a-menu-divider />
                        <a-menu-item key="1">
-                          <div>
+                          <div @click="safeExit">
                               <a-icon type="poweroff" />
                               安全退出
                           </div>
@@ -45,6 +45,19 @@
       },
       userSet(){
         this.$emit("userSet")
+      },
+      safeExit(){
+        this.$confirm({
+          title: '此操作将退出管理平台！',
+          cancelText:"取消",
+          okText:"确定",
+          onOk() {
+            return new Promise((resolve, reject) => {
+              window.location.assign('/')
+            })
+          },
+          onCancel() {},
+        });
       }
     }
   }

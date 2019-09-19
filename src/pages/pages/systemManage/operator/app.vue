@@ -39,7 +39,7 @@
                     </a-col>
                 </a-row>
             </a-form>
-            <a-row style="margin-top: 20px">
+            <a-row>
                 <a-col>
                     <a-button type="primary" icon="plus">新增</a-button>
                 </a-col>

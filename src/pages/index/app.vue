@@ -38,11 +38,6 @@ export default {
       form: this.$form.createForm(this),
     }
   },
-  watch:{
-    userName(nv){
-      console.log(nv)
-    }
-  },
   methods: {
     handleSubmit(e){
       e.preventDefault();

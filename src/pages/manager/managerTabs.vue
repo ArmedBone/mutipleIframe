@@ -1,31 +1,37 @@
 <template>
     <section>
         <div class="manager-tabs">
-            <div class="manager-tabs-prev" @click="prevOffset">
+            <div ref="prevButton" class="manager-tabs-prev" >
                 <a-icon type="left"></a-icon>
             </div>
             <div class="manager-tabs-content">
-                <div class="manager-tabs-content-items" :style="{'width':contentWidth+'px','left':-offsetLeft+'px'}">
-                   <div v-for="(it,index) in iframeList" @click="tabItemClick(it,index)" :key="it.target" class="manager-tabs-content-item">
-                       <a-tag :color="index == activeIndex?'blue':''" :target="it.target" @click.self="it=>void 0" @close.stop="removeTabItem(it.target,index)"  closable >{{it.title}}</a-tag>
-                   </div>
+                <div ref="tabsContent" class="manager-tabs-content-items">
                 </div>
             </div>
-            <div @click="nextOffset" class="manager-tabs-next">
+            <div ref="nextButton"  class="manager-tabs-next">
                 <a-icon type="right"></a-icon>
             </div>
             <div class="manager-tabs-operations">
-                操作{{activeIndex}},{{offsetIndex}},{{iframeList.length}}
+                <a-dropdown>
+                   <div>
+                       操作
+                   </div>
+                    <a-menu slot="overlay">
+                        <a-menu-item>
+                           <div @click="backCurrent">回到当前标签</div>
+                        </a-menu-item>
+                        <a-menu-item>
+                            <div @click="removeSiblings">关闭其他标签</div>
+                        </a-menu-item>
+                        <a-menu-item @click="removeAllTags">
+                           <div>关闭所有标签</div>
+                        </a-menu-item>
+                    </a-menu>
+                </a-dropdown>
             </div>
             <div class="tabs-item"></div>
         </div>
-        <div class="content-wrapper">
-            <iframe
-                    v-for="(it,index) in iframeList"
-                    v-show="index == activeIndex"
-                    :src="it.target"
-                    frameborder="0"
-                    class="content-iframe"></iframe>
+        <div ref="contentWrapper" class="content-wrapper">
         </div>
     </section>
 </template>
@@ -33,71 +39,33 @@
 <script>
   export default {
     name: 'managerTabs',
-    data(){
-      return{
-        contentWidth:0,
-        offsetIndex:0,
-        offsetLeft:0,
-        timer:null
-      }
-    },
-    props:{
-      "iframeList":{
-        type:Array
+    methods: {
+      //回到当前标签页
+      backCurrent() {
+        let tags = this.$refs.tabsContent.querySelectorAll('.ant-tag');
+        let activeIndex=-1;
+        tags.forEach((it,i)=>{
+          if(it.classList.contains('ant-tag-blue')){
+            activeIndex=i;
+            return void 0;
+          }
+        })
+        this.$emit('backCurrent',activeIndex);
       },
-      "activeIndex":{
-        type:Number
-      }
-    },
-    watch:{
-      iframeList(nv){
-       if(nv.length-this.offsetIndex<=0)this.offsetIndex=nv.length-1;
-        let self = this
-        clearTimeout(this.timer);
-        this.timer=setTimeout(function() {
-          self.$nextTick(function() {
-            let items = document.querySelectorAll('.manager-tabs-content-item');
-            self.contentWidth = Array.prototype.reduce.call(items,function(p,v,i) {
-              return p+Math.ceil(v.offsetWidth);
-            },0);
-          })
-        },0)
+      //关闭当前标签
+      removeSiblings(){
+        this.$emit("removeSiblings");
+      },
+      //关闭所有标签
+      removeAllTags(){
+        this.$emit("removeAllTags");
+      },
 
-      },
-      offsetIndex(nv){
-        let items = document.querySelectorAll('.manager-tabs-content-item');
-        let domList = Array.prototype.slice.call( items,0,nv);
-        this.offsetLeft = domList.reduce(function(p,v,i) {
-          return p+v.offsetWidth;
-        },0);
-        console.log(this.offsetLeft)
-      },
-      activeIndex(nv){
-        if(nv-this.offsetIndex>4) this.offsetIndex=nv;
-
-      }
-    },
-    computed:{
-
-    },
-    methods:{
-      removeTabItem(target,index){
-        this.$emit("removeTabItem",target,index);
-      },
-      prevOffset(){
-        if(this.iframeList.length-this.offsetIndex>4)this.offsetIndex +=4;
-      },
-      nextOffset(){
-        this.offsetIndex>4?this.offsetIndex -=4:this.offsetIndex=0;
-      },
-      tabItemClick(it,index){
-        this.$emit("tabItemClick",it,index)
-      }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .manager-tabs-btn{
         height: 40px;
         line-height: 40px;
@@ -167,5 +135,9 @@
         width: 100%;
         height: calc(100vh - 90px);
         background: $background;
+        display: none;
+        &.active{
+            display: block;
+        }
     }
 </style>
