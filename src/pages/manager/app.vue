@@ -88,9 +88,14 @@
     },
     mounted() {
       var self = this
+      //从浏览器读取明/暗风格
+     let theme = localStorage.getItem('theme');
+     if(theme!=null)this.theme=theme=='true'?true:false;
+
       //设置明暗风格
       window.setStyle = function(val) {
-        self.theme = val
+        self.theme = val;
+        localStorage.setItem('theme',val);
       }
       //设置主题颜色
       window.setPrimaryColor = function(color) {

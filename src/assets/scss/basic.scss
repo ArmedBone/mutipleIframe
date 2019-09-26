@@ -30,7 +30,16 @@
 	float: right;
 }
 .text-primary{
-  color: lighten($primary,20);
+  color: $primary;
+}
+.text-link{
+  color: $primary;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.text-link:hover{
+  filter: brightness(0.7);
+  /*text-decoration:underline*/
 }
 
 .page-wrapper{

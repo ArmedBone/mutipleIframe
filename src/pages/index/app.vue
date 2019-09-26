@@ -1,8 +1,11 @@
 <template>
   <div class="login">
       <div class="login-wrapper">
-        <h1>全球移动<span class="text-primary">流量</span>管理平台</h1>
         <div class="login-form">
+          <h1>
+            <img src="../../assets/img/logo.png" class="company-log">
+            全球移动<span class="text-primary" style="font-weight: 500" >流量</span>管理平台
+          </h1>
           <a-form :form="form" >
             <a-form-item>
               <a-input v-decorator="['userName',{rules: [{ required: true, message: '请输入您的账户!' }]} ]">
@@ -27,7 +30,7 @@
 </template>
 
 <script>
-  import {setToken} from "../../utils/data"
+  import {setToken} from "../../utils/data";
 export default {
   data() {
     return {
@@ -84,13 +87,21 @@ export default {
     }
     & h1{
       font-size: 24px;
-      color: white;
+      color: lighten($title,30);
+      font-weight: 300;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      & .company-log{
+        width: 30px;
+        height: 30px;
+        background-color: $primary;
+        border-radius: 4px;
+        vertical-align: sub;
+      }
     }
   }
   &-form{
-    padding:40px 30px 20px;
+    padding:30px 30px 20px;
     border-radius: $boder-radius;
     background-color: white;
     .ant-form-item{

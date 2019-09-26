@@ -1,6 +1,6 @@
 <template>
-    <div class="page-wrapper">
-        <div class="page-content">
+    <basic-layout>
+        <!--搜索表单-->
             <a-form  :form="searchForm">
                 <a-row>
                     <a-col :md="6">
@@ -41,9 +41,10 @@
             </a-form>
             <a-row>
                 <a-col>
-                    <a-button type="primary" icon="plus">新增</a-button>
+                    <a-button type="primary" icon="plus" @click="showAddModal">新增</a-button>
                 </a-col>
             </a-row>
+        <!--数据表格-->
             <a-table style="margin-top: 20px"
                      :pagination="pagination"
                     :columns="columns"
@@ -52,21 +53,104 @@
                      @change="handleTableChange"
                     :dataSource="dataList">
                 <div slot="action" slot-scope="text, record">
-                    <span class="ant-dropdown-link">
+                    <span class="text-link">
                         编辑
+                    </span>
+                    <span class="text-link" @click="getUserRelationship(record)">
+                        角色分配
                     </span>
                 </div>
             </a-table>
-        </div>
-    </div>
+            <!--增加操作员-->
+            <a-modal
+                    title="新增操作员"
+                    :visible="addFormVisible"
+                    :confirmLoading="addFormLoading"
+                    @ok="saveForm"
+                    @cancel="addFormVisible=false">
+                <a-form
+                        :form="addForm">
+                    <a-form-item
+                            label="操作员账号"
+                            :label-col="{ span:4}"
+                            :wrapper-col="{ span: 16 }">
+                        <a-input
+                                autocomplete="off"
+                                v-decorator="['userName',{rules: [
+                            { required: true,message: '请输入您的账号!' },
+                            { pattern:/^[A-Za-z0-9]{4,20}$/,message: '4-20位英文字母或数字!' },
+                        ]}]"/>
+                    </a-form-item>
+                    <a-form-item
+                            label="姓名"
+                            :label-col="{ span:4}"
+                            :wrapper-col="{ span: 16 }">
+                        <a-input   autocomplete="off" maxlength="18" v-decorator="['nickName',{rules: [
+                            { required: true,message: '请输入您的姓名!' },
+                        ]}]"/>
+                    </a-form-item>
+                    <a-form-item
+                            :label-col="{ span:4}"
+                            :wrapper-col="{ span:16 }"
+                            label="合作方">
+                        <a-radio-group  :options="[{'label':'男','value':1},{'label':'女','value':0}]" v-decorator="['sex',{initialValue:1}]" />
+                    </a-form-item>
+                    <a-form-item
+                            :label-col="{ span:4}"
+                            :wrapper-col="{ span:16 }"
+                            label="合作方">
+                        <a-select
+                              v-decorator="['partnerId',{rules: [
+                                    { required: true,message: '请选择合作商!' },
+                             ]}]"
+                                style="width: 100%" placeholder="请选择" >
+                            <a-select-option value="">全部</a-select-option>
+                            <a-select-option v-for="it in partnerList" :value="it.id">{{it.partnerName}}</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item
+                            label="邮箱"
+                            :label-col="{ span:4}"
+                            :wrapper-col="{ span: 16 }">
+                        <a-input
+                                autocomplete="off"
+                                v-decorator="['email',{rules: [
+                            { required: true,message: '请输入您的邮箱!' },
+                        ]}]"/>
+                    </a-form-item>
+                    <a-form-item
+                            label="电话"
+                            :label-col="{ span:4}"
+                            :wrapper-col="{ span: 16 }">
+                        <a-input
+                                maxlength="20"
+                                autocomplete="off"
+                                v-decorator="['phone',{rules: [
+                            { required: true,message: '请输入您的电话!' },
+                            { pattern:/^[0-9]+$/,message: '你输入的号码有误!' },
+                        ]}]"/>
+                    </a-form-item>
+                </a-form>
+            </a-modal>
+        <!--操作员赋予角色-->
+        <a-modal
+                title="角色分配"
+                :visible="roleVisible"
+                @ok="handleRoleOk"
+                :confirmLoading="roleLoading"
+                @cancel="roleVisible=false"
+        >
+            <div>
+                <a-checkbox-group :options="allRoleAndUserRelationship" v-model="hasRoleList"  />
+            </div>
+        </a-modal>
+
+    </basic-layout>
 </template>
 
 <script>
-  import AFormItem from 'ant-design-vue/es/form/FormItem'
-  import ARow from 'ant-design-vue/es/grid/Row'
   export default {
     name: 'app',
-    components: { ARow, AFormItem },
     data(){
       return {
         searchForm: this.$form.createForm(this),
@@ -78,6 +162,7 @@
           pageSize: 10
         },
         pagination:{},
+        /*表格数据列*/
         columns:[
           {
             title:"管理员账号",
@@ -100,8 +185,16 @@
             scopedSlots: { customRender: 'action' },
           }
         ],
-        dataList:[],
-        partnerList:[]
+        dataList:[], //表格数据源
+        partnerList:[],/*合作伙伴列表*/
+        addFormVisible:false, //增加操作员显示/隐藏
+        addFormLoading:false, //增加模态框spinner
+        addForm:this.$form.createForm(this), //增加表单对象
+        allRoleAndUserRelationship:[], //操作员查询到的所有角色列表
+        roleVisible:false,//角色分配显示与隐藏
+        roleLoading:false,//角色加载中的spinner
+        hasRoleList:[],//赋予的权限
+        roleCurrentId:-1
       }
     },
     created(){
@@ -109,6 +202,7 @@
       this.getData(1);
     },
     methods:{
+      //获取到所有的合作商
         async getPartnerList(){
             var data = await this.$axios({
               method:'get',
@@ -140,7 +234,69 @@
         this.pagination = pager;
         this.getData(pager.current);
       },
+      //初始化新增操作员表单
+      showAddModal(){
+        this.addForm.resetFields()
+        this.addFormVisible = true;
+      },
+      //提交表单
+      saveForm(e){
+        e.preventDefault();
+        let self = this;
+        this.addForm.validateFields(async(err, values) => {
+          if (!err) {
+               this.addFormLoading = true;
+            let data = await self.$axios({
+              method:'post',
+              url:'/usermanager/add',
+              params:{...values,"userType": "0"}
+            })
+            this.addFormLoading = false;
+            if(data.key=='0000'){
+              this.addFormVisible = false;
+              //self.showSuccess();
+              self.getData();
+            }
+          }
+        });
+      },
+      //查询操作员的权限
+    async getUserRelationship(record){
+          this.roleCurrentId = record.id;
+      let data = await this.$axios({
+        method:'post',
+        url:'/role/allRoleAndUserRelationship',
+        params:{"userId":record.id}
+      })
+      if(data.key=="0000"){
+        this.hasRoleList=[];
+        this.allRoleAndUserRelationship=data.data.map(it=>{
+          if(it.roleId)this.hasRoleList.push(it.id);
+          return{
+            'label':it.roleName,
+            'value':it.id
+          }
+        });
+        this.roleVisible=true;
+      }
+    },
+      //提交角色分配
+      async handleRoleOk(){
+        this.roleLoading=true;
+        let data = await this.$axios({
+          method:'post',
+          url:'/role/addUserToRole',
+          params:{
+           "userToRoleBean": {"userId":this.roleCurrentId,"roleIdList":this.hasRoleList}
+          }
+        })
+        this.roleLoading=false;
+        if(data.key=="0000"){
+          this.roleVisible=false;
+        }
+      }
     }
+
   }
 </script>
 

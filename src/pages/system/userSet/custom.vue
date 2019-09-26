@@ -9,7 +9,7 @@
                         整体风格配色设置
                     </div>
                     <div class="pull-right">
-                        <a-switch @change="setStyle" checkedChildren="暗" unCheckedChildren="明" defaultChecked/>
+                        <a-switch @change="setStyle" v-model="theme" checkedChildren="暗" unCheckedChildren="明" defaultChecked/>
                     </div>
                 </div>
             </a-list-item-meta>
@@ -43,11 +43,14 @@
     name: 'custom',
     data(){
       return{
+        theme:true,
         colors:['#7265e6','#00a2ae','#1890ff','#FF9999','#339900','#FF99FF','#660099','#990066','#9966FF']
       }
     },
     mounted(){
-
+      //从浏览器读取明/暗风格
+      let theme = localStorage.getItem('theme');
+      if(theme!=null)this.theme=theme=='true'?true:false;
     },
     methods:{
       setStyle(val){
