@@ -3,8 +3,8 @@
       <div class="login-wrapper">
         <div class="login-form">
           <h1>
-            <img src="../../assets/img/logo.png" class="company-log">
-            全球移动<span class="text-primary" style="font-weight: 500" >流量</span>管理平台
+            <!--<img src="../../assets/img/logo.png" class="company-log">-->
+            Remote <span class="text-primary" style="font-weight: 500" >SIM Provisioning</span> Platform
           </h1>
           <a-form :form="form" >
             <a-form-item>

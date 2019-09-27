@@ -4,7 +4,7 @@
              :style="{'background-color':theme?'#0c142d':'white'}">
             <div :class="theme?'sitename dark':'sitename light'">
                 <img src="../../assets/img/logo.png">
-                <div>运营管理平台</div>
+                <div>RSP Platform</div>
             </div>
             <a-menu
                     mode="inline"
@@ -66,6 +66,7 @@
   import ManagerHead from './managerHead'
   import ManagerTabs from './managerTabs'
     import TabsMinxin from './tabsMinxin'
+  import menuData from '@/menu/api'
   export default {
     data() {
       return {
@@ -123,14 +124,17 @@
         this.handleMenuClick({ item: { $el: li } })
       },
       async getMenu() {
-        var data = await this.$axios({
+        //暂时写死
+        this.sourceMenu = this.parseTree(menuData)
+
+        /*var data = await this.$axios({
           url: '/main/menu',
           method: 'post',
           params: { 'systemId': '01' }
         })
         if (data.key == '0000') {
           this.sourceMenu = this.parseTree(data.data.menu)
-        }
+        }*/
       },
       parseTree(all) {
         var MENU_DATA = []
@@ -222,11 +226,9 @@
         @media screen and (min-width: 557px) {
             width: 40px;
         }
-
     }
-
-    .ant-menu-inline-collapsed > .ant-menu-item,
-    .side-menu .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+   .manager .side-menu .ant-menu-inline-collapsed > .ant-menu-item,
+   .manager .side-menu .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
         padding: 0 12px !important;
     }
 
