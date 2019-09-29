@@ -3,23 +3,23 @@
         itemLayout="horizontal">
         <a-list-item >
             <a-list-item-meta>
-                <div slot="title">风格配色</div>
+                <div slot="title">{{$t('m.userSettings.theme')}}</div>
                 <div slot="description" >
                     <div class="pull-left">
-                        整体风格配色设置
+                        {{$t('m.userSettings.themeDesp')}}
                     </div>
                     <div class="pull-right">
-                        <a-switch @change="setStyle" v-model="theme" checkedChildren="暗" unCheckedChildren="明" defaultChecked/>
+                        <a-switch @change="setStyle" v-model="theme" :checkedChildren="$t('m.userSettings.dark')" :unCheckedChildren="$t('m.userSettings.light')" defaultChecked/>
                     </div>
                 </div>
             </a-list-item-meta>
         </a-list-item>
         <a-list-item >
             <a-list-item-meta>
-                <div slot="title">主题色</div>
+                <div slot="title">{{$t('m.userSettings.primary')}}</div>
                 <div slot="description" >
                     <div class="pull-left">
-                        页面风格配色
+                        {{$t('m.userSettings.primaryDesp')}}
                     </div>
                     <div class="pull-right">
                         <a-avatar

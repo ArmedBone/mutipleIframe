@@ -5,23 +5,20 @@
                    :lg="{span:12,offset:6}">
                <a-form class="profile-form"  :form="addForm">
                    <a-form-item
-                   label="上传"
+                   :label="$t('m.uploadProfile.upload')"
                    :label-col="{ span:4}"
                    :wrapper-col="{ span: 16 }">
                        <a-upload
-                               v-decorator="[
-                              'jsonData',
-                              {rules: [{ required:true, message: '请上传文件' }]}
-                            ]"
+                               v-decorator="[ 'jsonData',{rules: [{ required:true, message:()=>$t('m.uploadProfile.uploadFile') }]}]"
                                name="file"
                                :multiple="true"
                                :fileList="fileList"
-                               action="http://192.168.0.200:9000/gsma/rsp/manager/cert/parse"
+                               :action="uploadUrl"
                                :headers="headers"
                                @change="handleUploadChange">
                            <a-button style="float: left">
                                <a-icon type="upload"/>
-                               选择证书文件
+                               {{$t('m.uploadProfile.selectFile')}}
                            </a-button>
                        </a-upload>
                    </a-form-item>
@@ -36,7 +33,7 @@
                            :label-col="{ span:4}"
                            :wrapper-col="{ span: 16 }">
                        <a-input autocomplete="off" v-decorator="['privateSecret',{rules: [
-                            { required: true,message: '请输入秘钥!' },
+                            { required: true,message: ()=>$t('m.uploadProfile.inputKey') },
                         ]}]"/>
                    </a-form-item>
                    <a-form-item
@@ -49,15 +46,14 @@
                    </a-form-item>
                     <a-form-item
                             style="text-align: right"
-                                 :wrapper-col="{ span: 16,offset:4 }">
+                                 :wrapper-col="{ lg:{span: 16,offset:4},xs:{span:24} }">
                         <a-button style="margin-right: 10px" @click="reloadPage()">
-                            重置
+                            {{ $t('m.common.reset')}}
                         </a-button>
                         <a-button type="primary" @click="submitForm">
-                            提交
+                            {{ $t('m.common.confirm')}}
                         </a-button>
                     </a-form-item>
-
                </a-form>
            </a-col>
        </a-row>
@@ -79,7 +75,16 @@
         addForm: this.$form.createForm(this), //增加表单对象
         jsonData:{},//json内容
         fileList:[],//文件内容
-        isCI:true
+        isCI:true,
+        uploadUrl:sessionStorage.getItem('baseURL')+'/gsma/rsp/manager/cert/parse'
+      }
+    },
+    watch:{
+      '$i18n.locale'(nv){
+        console.log(nv)
+        console.log(this.$t('m.uploadProfile.uploadFile'))
+        this.addForm.validateFields(['jsonData','privateSecret'],{ force: true })
+         // this.$set(this,'jsonDataError',this.$t('m.uploadProfile.uploadFile'));
       }
     },
     methods: {
@@ -125,13 +130,12 @@
       async sendFormData(params){
         let data = await this.$axios({
           method:'post',
-          url:'http://192.168.0.200:9000/gsma/rsp/manager/cert/store',
+          url:'/gsma/rsp/manager/cert/store',
           data:params
         })
         if(data.code=='0'){
           this.$message.success(`操作成功,页面即将刷新`);
           setTimeout(function() {
-
           },1500)
         }
       },

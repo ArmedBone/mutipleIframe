@@ -6,9 +6,9 @@ import en from 'element-ui/lib/locale/lang/en'
 Vue.use(VueI18n)
 
 export default new VueI18n({
-  locale: 'en-US',
+  locale: 'en-GB',
   messages: {
-    'en-US':Object.assign(require('./lang/en'),en),
+    'en-GB':Object.assign(require('./lang/en'),en),
     'zh-CN':Object.assign(require('./lang/cn'),zh),
   }
 })

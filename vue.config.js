@@ -1,39 +1,43 @@
 'use strict'
-const glob = require('glob')
+const glob = require('glob');
+const path = require('path')
 const ThemeColorReplacer = require('webpack-theme-color-replacer')
 const webpack = require('webpack')
 const generate = require('@ant-design/colors/lib/generate').default
 const pages = {}
 
 glob.sync('./src/pages/**/app.js').forEach(path => {
-  const chunk = path.split('./src/pages/')[1].split('/app.js')[0]
+ const chunk = path.split('./src/pages/')[1].split('/app.js')[0]
   pages[chunk] = {
     entry: path,
     template: 'public/index.html',
     chunks: ['chunk-vendors', 'chunk-common', chunk]
   }
+
 })
 module.exports = {
   pages,
   chainWebpack: config => {
-    config.plugins.delete('named-chunks');
     //分包
+    config.plugins.delete('named-chunks');
     config.optimization.splitChunks({
       chunks: 'all',// async表示抽取异步模块，all表示对所有模块生效，initial表示对同步模块生效
       cacheGroups: {
         vendors: {
-          test: /[\/]node_modules[\/]/,// 指定是node_modules下的第三方包
+          test:/[\\/]node_modules[\\/]/,// 指定是node_modules下的第三方包
           name: 'chunk-vendors',
-          chunks: 'all',
-          priority: -10   // 抽取优先级
+          minChunks: 5, // 表示将引用模块如不同文件引用了多少次，才能分离生成新chunk
+          chunks: "all",
+          priority: 10   // 抽取优先级
         },
         // 抽离自定义工具库
         utilCommon: {
-          name: 'chunk-common',
-          minSize: 1024, // 将引用模块分离成新代码文件的最小体积
-          minChunks: 2, // 表示将引用模块如不同文件引用了多少次，才能分离生成新chunk
-          priority: -20
-        }
+           name: 'chunk-common',
+           //minSize: 1024, // 将引用模块分离成新代码文件的最小体积
+           minChunks: 1, // 表示将引用模块如不同文件引用了多少次，才能分离生成新chunk
+           priority: 5,
+          reuseExistingChunk: true
+         }
       }
     })
   },

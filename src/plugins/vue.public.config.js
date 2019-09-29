@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Antd from 'ant-design-vue'
+import i18n from '@/i18n'
 import 'ant-design-vue/dist/antd.css'
 import './axios'
 import {changeColor} from '../utils/color'
@@ -20,6 +21,7 @@ export default function(App) {
   setTimeout(function() {
     new Vue({
       el: '#app',
+      i18n,
       render: h => h(App)
     })
   }, 0)

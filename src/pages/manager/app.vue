@@ -1,72 +1,75 @@
 <template>
-    <section class="manager">
-        <div :class="collapse?'side-menu active':'side-menu'"
-             :style="{'background-color':theme?'#0c142d':'white'}">
-            <div :class="theme?'sitename dark':'sitename light'">
-                <img src="../../assets/img/logo.png">
-                <div>RSP Platform</div>
-            </div>
-            <a-menu
-                    mode="inline"
-                    :theme="theme?'dark':'light'"
-                    @click="handleMenuClick"
-                    :inlineCollapsed="collapse">
-                <a-menu-item
-                        v-for="level_01 in sourceMenu"
-                        v-if="!level_01.children"
-                        :target="level_01.resourceValue"
-                        :title="level_01.resourceName"
-                        data-id="level_01.id"
-                        :key="level_01.id">
-                    <a-icon type="pie-chart"/>
-                    <span>{{level_01.resourceName}}</span>
-                </a-menu-item>
-                <a-sub-menu
-                        v-for="level_01 in sourceMenu"
-                        v-if="level_01.children && level_01.children.length!=0"
-                        data-id="level_01.id"
-                        :key="level_01.id">
-                    <span slot="title"><a-icon type="mail"/><span>{{level_01.resourceName}}</span></span>
+    <basic-layout type="empty">
+        <section class="manager">
+            <div :class="collapse?'side-menu active':'side-menu'"
+                 :style="{'background-color':theme?'#0c142d':'white'}">
+                <div :class="theme?'sitename dark':'sitename light'">
+                    <img src="../../assets/img/logo.png">
+                    <div>RSP Platform</div>
+                </div>
+                <a-menu
+                        mode="inline"
+                        :theme="theme?'dark':'light'"
+                        @click="handleMenuClick"
+                        :inlineCollapsed="collapse">
                     <a-menu-item
-                            v-for="level_02 in level_01.children"
-                            v-if="!level_02.children "
-                            :target="level_02.resourceValue"
-                            :title="level_02.resourceName"
-                            data-id="level_02.id"
-                            :key="level_02.id">
-                        <span>{{level_02.resourceName}}</span>
+                            v-for="level_01 in sourceMenu"
+                            v-if="!level_01.children"
+                            :target="level_01.resourceValue"
+                            :title="level_01.resourceName"
+                            data-id="level_01.id"
+                            :key="level_01.id">
+                        <a-icon type="pie-chart"/>
+                        <span>{{$t(level_01.resourceName)}}</span>
                     </a-menu-item>
                     <a-sub-menu
-                            v-for="level_02 in level_01.children"
-                            v-if="level_02.children && level_02.children.length!=0"
-                            data-id="level_02.id"
-                            :key="level_02.id">
-                        <span slot="title">{{level_02.resourceName}}</span>
+                            v-for="level_01 in sourceMenu"
+                            v-if="level_01.children && level_01.children.length!=0"
+                            data-id="level_01.id"
+                            :key="level_01.id">
+                        <span slot="title"><a-icon type="mail"/><span>{{$t(level_01.resourceName)}}</span></span>
                         <a-menu-item
-                                v-for="level_03 in level_02.children"
-                                v-if="!level_03.children "
-                                :target="level_03.resourceValue"
-                                :title="level_03.resourceName"
-                                data-id="level_03.id"
-                                :key="level_03.id">
-                            <span>{{level_03.resourceName}}</span>
+                                v-for="level_02 in level_01.children"
+                                v-if="!level_02.children "
+                                :target="level_02.resourceValue"
+                                :title="level_02.resourceName"
+                                data-id="level_02.id"
+                                :key="level_02.id">
+                            <span>{{$t('level_02.resourceName')}}</span>
                         </a-menu-item>
+                        <a-sub-menu
+                                v-for="level_02 in level_01.children"
+                                v-if="level_02.children && level_02.children.length!=0"
+                                data-id="level_02.id"
+                                :key="level_02.id">
+                            <span slot="title">{{$t(level_02.resourceName)}}</span>
+                            <a-menu-item
+                                    v-for="level_03 in level_02.children"
+                                    v-if="!level_03.children "
+                                    :target="level_03.resourceValue"
+                                    :title="level_03.resourceName"
+                                    data-id="level_03.id"
+                                    :key="level_03.id">
+                                <span>{{$t(level_03.resourceName)}}</span>
+                            </a-menu-item>
+                        </a-sub-menu>
                     </a-sub-menu>
-                </a-sub-menu>
-            </a-menu>
-        </div>
-        <div :class="collapse?'manager-content active':'manager-content'">
-            <manager-head @userSet="userSet" @menu-fold="menuFold" :collapse="collapse"></manager-head>
-            <manager-tabs @backCurrent="backCurrent" @removeSiblings="removeSiblings" @removeAllTags="removeAllTags" ref="managerTabs"></manager-tabs>
-        </div>
-
-    </section>
+                </a-menu>
+            </div>
+            <div :class="collapse?'manager-content active':'manager-content'">
+                <manager-head @userSet="userSet" @menu-fold="menuFold" :collapse="collapse"></manager-head>
+                <manager-tabs @backCurrent="backCurrent" @removeSiblings="removeSiblings" @removeAllTags="removeAllTags"
+                              ref="managerTabs"></manager-tabs>
+            </div>
+        </section>
+    </basic-layout>
 </template>
 <script type="es6">
   import ManagerHead from './managerHead'
   import ManagerTabs from './managerTabs'
-    import TabsMinxin from './tabsMinxin'
+  import TabsMinxin from './tabsMinxin'
   import menuData from '@/menu/api'
+
   export default {
     data() {
       return {
@@ -76,10 +79,10 @@
         iframeList: [],
         activeIndex: -1,
         theme: true,
-        currentSelecte:[]
+        currentSelecte: []
       }
     },
-    mixins:[TabsMinxin],
+    mixins: [TabsMinxin],
     components: {
       'managerHead': ManagerHead,
       'managerTabs': ManagerTabs
@@ -90,13 +93,13 @@
     mounted() {
       var self = this
       //从浏览器读取明/暗风格
-     let theme = localStorage.getItem('theme');
-     if(theme!=null)this.theme=theme=='true'?true:false;
+      let theme = localStorage.getItem('theme')
+      if (theme != null) this.theme = theme == 'true' ? true : false
 
       //设置明暗风格
       window.setStyle = function(val) {
-        self.theme = val;
-        localStorage.setItem('theme',val);
+        self.theme = val
+        localStorage.setItem('theme', val)
       }
       //设置主题颜色
       window.setPrimaryColor = function(color) {
@@ -106,7 +109,7 @@
     methods: {
       //修改窗口的主题颜色
       setPrimaryColor(color) {
-        localStorage.setItem('primaryColor',color);
+        localStorage.setItem('primaryColor', color)
         window.changeColor(color)
         var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe'))
         iframes.forEach(it => {
@@ -120,7 +123,7 @@
       userSet() {
         var li = document.createElement('li')
         li.setAttribute('target', '/system/userSet.html')
-        li.setAttribute('title', '账户设置')
+        li.setAttribute('title', 'm.router.userSettings')
         this.handleMenuClick({ item: { $el: li } })
       },
       async getMenu() {
@@ -164,7 +167,7 @@
           return it.parentId == 0
         })
         return resourceTree
-      },
+      }
 
     }
   }
@@ -182,19 +185,22 @@
         height: 50px;
         font-size: 18px;
         line-height: 50px;
-        & img{
-            width:30px;
+
+        & img {
+            width: 30px;
             height: 30px;
             margin: 10px 4px;
             float: left;
             border-radius: 4px;
             background-color: $primary;
         }
-        & div{
+
+        & div {
             float: left;
-            width:220px - 38px ;
+            width: 220px - 38px;
             text-indent: 4px;
         }
+
         &.dark {
             color: white;
         }
@@ -213,8 +219,9 @@
         overflow: hidden;
         border-right: 1px solid #e5e5e5;
         z-index: 200;
-        box-shadow: 0 0 4px rgba(0,0,0,0.1);
-        & .ant-menu.ant-menu-inline{
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+
+        & .ant-menu.ant-menu-inline {
             border-right: none;
         }
     }
@@ -227,8 +234,9 @@
             width: 40px;
         }
     }
-   .manager .side-menu .ant-menu-inline-collapsed > .ant-menu-item,
-   .manager .side-menu .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+
+    .manager .side-menu .ant-menu-inline-collapsed > .ant-menu-item,
+    .manager .side-menu .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
         padding: 0 12px !important;
     }
 

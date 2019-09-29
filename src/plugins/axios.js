@@ -10,7 +10,7 @@ if(process.env.NODE_ENV=="development"){
     //window.Config.baseURL = "http://192.168.0.171:8081/api/"
 }
 let config = {
-    baseURL:window.Config.baseURL,  //process.env.baseURL || process.env.apiUrl || ""
+    baseURL:sessionStorage.getItem('baseURL'),  //process.env.baseURL || process.env.apiUrl || ""
     timeout: 60 * 1000, // Timeout
     // withCredentials: true, // Check cross-site Access-Control
 };

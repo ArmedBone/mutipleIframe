@@ -1,3 +1,3 @@
 window.Config={
-    baseURL:'https://t-operation.enjoymov.com/rp/main/'
+    baseURL:'http://127.0.0.1:9000/gsma/rsp/manager/'
 }

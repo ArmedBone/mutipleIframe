@@ -18,12 +18,14 @@ export const m={
     "back":"返回",
     "save":"保存",
     "query":"查询",
+    "upload":"上传",
+    "reset":"重置",
     "planStatus":"套餐状态",
     "planStatus_all":"全部",
     "planStatus_00":"未使用",
     "planStatus_01":"正在使用",
     "planStatus_02":"使用结束",
-    "planStatus_03":"已取消"
+    "planStatus_03":"已取消",
   },
   "errors":{
     "0":"请求服务无法连接",
@@ -36,4 +38,39 @@ export const m={
     "502":"服务器网关错误",
     "504":"请求超时",
   },
+  "router":{
+    "userSettings":"用户设置",
+    "uploadProfile":"上传证书",
+    "operator":"操作员管理"
+  },
+  "index":{
+    "usernameErr":"请输入您的账户!",
+    "passwordErr": "请输入您的密码",
+    "logIn":"登录",
+  },
+  "manager":{
+    "username":"用户",
+    "set":"账户设置",
+    "exit":"安全退出",
+    "exitText":"此操作将退出管理平台!",
+    "operate":"操作",
+    "currentTag":"回到当前标签",
+    "closeOtherTags":"关闭其他标签",
+    "closeAllTags":"关闭所有标签"
+  },
+  "uploadProfile":{
+    "upload":"上传",
+    "uploadFile":"请上传文件",
+    "selectFile":"选择证书文件",
+    "inputKey":"请输入秘钥"
+  },
+  "userSettings":{
+    'personalise':'个性化修改',
+    'theme':'主题色',
+    'themeDesp': '整体风格配色设置',
+    'primary':'风格配色',
+    'primaryColor':'页面风格配色',
+    'dark':'暗',
+    'light':'明'
+  }
 }

@@ -14,17 +14,17 @@
             <div class="manager-tabs-operations">
                 <a-dropdown>
                    <div>
-                       操作
+                      {{$t('m.manager.operate')}}
                    </div>
                     <a-menu slot="overlay">
                         <a-menu-item>
-                           <div @click="backCurrent">回到当前标签</div>
+                           <div @click="backCurrent">{{$t('m.manager.currentTag')}}</div>
                         </a-menu-item>
                         <a-menu-item>
-                            <div @click="removeSiblings">关闭其他标签</div>
+                            <div @click="removeSiblings">{{$t('m.manager.closeOtherTags')}}</div>
                         </a-menu-item>
                         <a-menu-item @click="removeAllTags">
-                           <div>关闭所有标签</div>
+                           <div>{{$t('m.manager.closeAllTags')}}</div>
                         </a-menu-item>
                     </a-menu>
                 </a-dropdown>

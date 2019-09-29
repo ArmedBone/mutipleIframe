@@ -5,10 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title></title>
+    <script src="config.js"></script>
     <script>
-      window.Config={
-        baseURL:'https://t-operation.enjoymov.com/rp/main/'
+      if(window.Config.baseURL){
+        sessionStorage.setItem('baseURL',window.Config.baseURL);
       }
     </script>
   </head>

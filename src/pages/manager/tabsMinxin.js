@@ -36,7 +36,8 @@ export default {
       tag.setAttribute('target', target);
       tag.classList.add('ant-tag');
       tag.classList.add('ant-tag-blue');
-      tag.innerText=title;
+      tag.setAttribute('title',title);
+      tag.innerHTML="<span>"+this.$t(title)+"</span>";
       tag.appendChild(this.createBitClose(title));
       return tag
     },

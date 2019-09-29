@@ -26,7 +26,7 @@
                                 label="合作方">
                             <a-select v-model="search.partnerId" style="width: 100%" placeholder="请选择" >
                                 <a-select-option value="">全部</a-select-option>
-                                <a-select-option v-for="it in partnerList" :value="it.id">{{it.partnerName}}</a-select-option>
+                                <a-select-option v-for="it in partnerList" :key="it.id" :value="it.id">{{it.partnerName}}</a-select-option>
                             </a-select>
                         </a-form-item>
                     </a-col>
@@ -105,7 +105,7 @@
                              ]}]"
                                 style="width: 100%" placeholder="请选择" >
                             <a-select-option value="">全部</a-select-option>
-                            <a-select-option v-for="it in partnerList" :value="it.id">{{it.partnerName}}</a-select-option>
+                            <a-select-option v-for="it in partnerList" :key="it.id" :value="it.id">{{it.partnerName}}</a-select-option>
                         </a-select>
                     </a-form-item>
                     <a-form-item
