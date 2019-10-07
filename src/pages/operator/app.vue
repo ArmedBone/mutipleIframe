@@ -227,8 +227,8 @@
                this.addFormLoading = true;
             let data = await self.$axios({
               method:'post',
-              url:'/gsma/rsp/manager/operator/add',
-              params:{...values}
+              url:'/operator/add',
+              data:{...values}
             })
             this.addFormLoading = false;
             if(data.key=='0000'){
