@@ -76,7 +76,7 @@
         jsonData:{},//json内容
         fileList:[],//文件内容
         isCI:true,
-        uploadUrl:sessionStorage.getItem('baseURL')+'/gsma/rsp/manager/cert/parse'
+        uploadUrl:sessionStorage.getItem('baseURL')+'/cert/parse'
       }
     },
     watch:{
@@ -130,7 +130,7 @@
       async sendFormData(params){
         let data = await this.$axios({
           method:'post',
-          url:'/gsma/rsp/manager/cert/store',
+          url:'/cert/store',
           data:params
         })
         if(data.code=='0'){

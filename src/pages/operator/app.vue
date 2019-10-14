@@ -1,32 +1,18 @@
 <template>
     <basic-layout>
         <!--搜索表单-->
-            <a-form  :form="searchForm">
+       <!--     <a-form  :form="searchForm">
                 <a-row>
                     <a-col :md="6">
                         <a-form-item
                                 :label-col="{ span: 8 }"
                                 :wrapper-col="{ span:16 }"
-                                label="操作员账号">
-                            <a-input v-model="search.userName" placeholder="请输入" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :md="6">
-                        <a-form-item
-                                :label-col="{ span: 8 }"
-                                :wrapper-col="{ span:16 }"
-                                label="姓名">
-                            <a-input v-model="search.nickName" placeholder="请输入" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :md="6">
-                        <a-form-item
-                                :label-col="{ span: 8 }"
-                                :wrapper-col="{ span:16 }"
-                                label="合作方">
-                            <a-select v-model="search.partnerId" style="width: 100%" placeholder="请选择" >
-                                <a-select-option value="">全部</a-select-option>
-                                <a-select-option v-for="it in partnerList" :key="it.id" :value="it.id">{{it.partnerName}}</a-select-option>
+                                label="状态">
+                            <a-select v-model="search.state" style="width: 100%" placeholder="请选择" >
+                                &lt;!&ndash;<a-select-option value="">全部</a-select-option>&ndash;&gt;
+                                <a-select-option :value="1">可用的</a-select-option>
+                                <a-select-option :value="0">禁止</a-select-option>
+                                <a-select-option :value="-1">删除</a-select-option>
                             </a-select>
                         </a-form-item>
                     </a-col>
@@ -38,29 +24,23 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-            </a-form>
+            </a-form>-->
             <a-row>
                 <a-col>
                     <a-button type="primary" icon="plus" @click="showAddModal">新增</a-button>
                 </a-col>
             </a-row>
-        <!--数据表格-->
-            <a-table style="margin-top: 20px"
-                     :pagination="pagination"
-                    :columns="columns"
-                    :rowKey="record => record.id"
-                     :scroll="{ x: 800 }"
-                     @change="handleTableChange"
-                    :dataSource="dataList">
-                <div slot="action" slot-scope="text, record">
-                    <span class="text-link">
-                        编辑
-                    </span>
-                    <span class="text-link" @click="getUserRelationship(record)">
-                        角色分配
-                    </span>
-                </div>
-            </a-table>
+            <a-tabs defaultActiveKey="1">
+                <a-tab-pane tab="可用的" key="1">
+                    <operator-table ref="enable" :state="1"></operator-table>
+                </a-tab-pane>
+                <a-tab-pane tab="禁止的" key="0" forceRender>
+                    <operator-table ref="disable" :state="0"></operator-table>
+                </a-tab-pane>
+                <a-tab-pane tab="删除的" key="-1">
+                    <operator-table ref="deleted" :state="-1"></operator-table>
+                </a-tab-pane>
+            </a-tabs>
             <!--增加操作员-->
             <a-modal
                     title="新增操作员"
@@ -111,108 +91,24 @@
 
                 </a-form>
             </a-modal>
-        <!--操作员赋予角色-->
-        <a-modal
-                title="角色分配"
-                :visible="roleVisible"
-                @ok="handleRoleOk"
-                :confirmLoading="roleLoading"
-                @cancel="roleVisible=false"
-        >
-            <div>
-                <a-checkbox-group :options="allRoleAndUserRelationship" v-model="hasRoleList"  />
-            </div>
-        </a-modal>
-
     </basic-layout>
 </template>
 
 <script>
+    import OperatorTable from "./operatorTable"
   export default {
     name: 'app',
     data(){
       return {
-        searchForm: this.$form.createForm(this),
-        search:{
-          userName:'',
-          nickName:'',
-          partnerId:'',
-          pageNum: 1,
-          pageSize: 10
-        },
-        pagination:{},
-        /*表格数据列*/
-        columns:[
-          {
-            title:"管理员账号",
-            dataIndex:'userName'
-          },
-          {
-            title:"昵称",
-            dataIndex:'nickName'
-          },
-          {
-            title:"合作方",
-            dataIndex:'partnerId'
-          },
-          {
-            title:'邮箱',
-            dataIndex:"email"
-          },
-          {
-            title:'操作',
-            scopedSlots: { customRender: 'action' },
-          }
-        ],
-        dataList:[], //表格数据源
-        partnerList:[],/*合作伙伴列表*/
         addFormVisible:false, //增加操作员显示/隐藏
         addFormLoading:false, //增加模态框spinner
         addForm:this.$form.createForm(this), //增加表单对象
-        allRoleAndUserRelationship:[], //操作员查询到的所有角色列表
-        roleVisible:false,//角色分配显示与隐藏
-        roleLoading:false,//角色加载中的spinner
-        hasRoleList:[],//赋予的权限
-        roleCurrentId:-1
       }
     },
-    created(){
-      /*this.getPartnerList();
-      this.getData(1);*/
+    components:{
+      "operatorTable":OperatorTable
     },
     methods:{
-      //获取到所有的合作商
-        async getPartnerList(){
-            var data = await this.$axios({
-              method:'get',
-              url:'/partner/list',
-            })
-          this.partnerList = data.data;
-        },
-      //查询用户
-      async getData(pageNum){
-        if(pageNum)this.search.pageNum=pageNum;
-        var data = await this.$axios({
-                      url:'/usermanager/list',
-                      method:'get',
-                      params:{
-                        ...this.search
-                      }
-                    })
-        if(data.key=='0000'){
-          this.dataList = data.dataList;
-          const pagination = { ...this.pagination };
-          pagination.total =data.totalCount;
-          this.pagination = pagination;
-        }
-      },
-      //分页逻辑
-      handleTableChange (pagination, filters, sorter) {
-        const pager = { ...this.pagination };
-        pager.current = pagination.current;
-        this.pagination = pager;
-        this.getData(pager.current);
-      },
       //初始化新增操作员表单
       showAddModal(){
         this.addForm.resetFields()
@@ -231,49 +127,18 @@
               data:{...values}
             })
             this.addFormLoading = false;
-            if(data.key=='0000'){
+            if(data.code=='0'){
               this.addFormVisible = false;
               //self.showSuccess();
-              self.getData();
+              self.addFormVisible = false;
+              if(this.$refs.enable)this.$refs.enable.getData();
+              if(this.$refs.disable)this.$refs.disable.getData();
+              if(this.$refs.deleted)this.$refs.deleted.getData();
             }
           }
         });
       },
-      //查询操作员的权限
-    async getUserRelationship(record){
-          this.roleCurrentId = record.id;
-      let data = await this.$axios({
-        method:'post',
-        url:'/role/allRoleAndUserRelationship',
-        params:{"userId":record.id}
-      })
-      if(data.key=="0000"){
-        this.hasRoleList=[];
-        this.allRoleAndUserRelationship=data.data.map(it=>{
-          if(it.roleId)this.hasRoleList.push(it.id);
-          return{
-            'label':it.roleName,
-            'value':it.id
-          }
-        });
-        this.roleVisible=true;
-      }
-    },
-      //提交角色分配
-      async handleRoleOk(){
-        this.roleLoading=true;
-        let data = await this.$axios({
-          method:'post',
-          url:'/role/addUserToRole',
-          params:{
-           "userToRoleBean": {"userId":this.roleCurrentId,"roleIdList":this.hasRoleList}
-          }
-        })
-        this.roleLoading=false;
-        if(data.key=="0000"){
-          this.roleVisible=false;
-        }
-      }
+
     }
 
   }
